@@ -10,8 +10,8 @@ entity:
       valid_from: 2026-08-31T09:57:31.607Z
   category: support
 profile:
-  summary: Omnichannel customer communication, AI agents, bots, and workflow automation in one inbox.
   description: Lodgestory unifies WhatsApp, Instagram, email, SMS, voice, and web chat in one inbox, with bots and workflow automation.
+  summary: Omnichannel customer communication, AI agents, bots, and workflow automation in one inbox.
   links:
     site: https://lodgestory.com
 sources:
