@@ -1,0 +1,19 @@
+{
+  "name": "opscontrol-npm-health-x402",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@hono/node-server": "2.1.1",
+    "@x402/core": "2.26.0",
+    "@x402/evm": "2.26.0",
+    "@x402/hono": "2.26.0",
+    "hono": "4.13.8"
+  }
+}
