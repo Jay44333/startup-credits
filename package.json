@@ -1,0 +1,8 @@
+{
+  "name": "taskmarket-worker-runner",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {"start": "node taskmarket-worker.mjs"},
+  "dependencies": {"@lucid-agents/taskmarket": "latest"}
+}
