@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500" viewBox="0 0 1000 1500">
+<defs>
+  <pattern id="paper" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#f4f0df"/><circle cx="4" cy="5" r=".8" fill="#d8d0b8" opacity=".5"/><circle cx="18" cy="20" r=".6" fill="#d8d0b8" opacity=".38"/></pattern>
+  <style><![CDATA[
+    .ink{fill:#24342d}.muted{fill:#64736b}.rule{stroke:#31453b;stroke-width:2}.fine{stroke:#9aa49d;stroke-width:1.5}.box{fill:#faf7eb;stroke:#31453b;stroke-width:2}.num{font:700 13px Arial;letter-spacing:2px;fill:#f4f0df}.name{font:700 27px Georgia,serif;fill:#24342d}.latin{font:italic 14px Georgia,serif;fill:#758078}.note{font:18px Georgia,serif;fill:#29372f}.small{font:13px Arial;fill:#617068}.label{font:700 13px Arial;letter-spacing:2px;fill:#506059}.line{fill:none;stroke:#2e4036;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.thin{fill:none;stroke:#52655a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}.accent{fill:#b65f4a}.ochre{fill:#d4ab55}.green{fill:#789b70}.blue{fill:#6d8e98}.cream{fill:#efe5bd}
+  ]]></style>
+</defs>
+<rect width="1000" height="1500" fill="url(#paper)"/>
+<rect x="28" y="28" width="944" height="1444" rx="3" fill="none" stroke="#24342d" stroke-width="3"/>
+<text x="60" y="78" class="label">DOMESTIC NATURAL HISTORY · OBSERVATION SHEET 05</text>
+<text x="60" y="132" font-family="Georgia,serif" font-size="50" font-weight="700" fill="#24342d">A Field Guide to Five</text>
+<text x="60" y="184" font-family="Georgia,serif" font-size="50" font-weight="700" fill="#24342d">Imaginary Household Pests</text>
+<text x="60" y="218" font-family="Georgia,serif" font-size="18" font-style="italic" fill="#68766f">Minor inhabitants identified by the inconveniences they leave behind.</text>
+<rect x="580" y="66" width="357" height="44" rx="22" fill="#24342d"/><text x="758.5" y="94" text-anchor="middle" font-family="Arial" font-size="11.2" font-weight="700" letter-spacing="1.4" fill="#f4f0df">AN ENTIRELY FICTIONAL FIELD GUIDE</text>
+<line x1="60" x2="940" y1="244" y2="244" class="rule"/>
+
+<rect x="60" y="270" width="880" height="210" rx="8" class="box"/><rect x="60" y="270" width="76" height="30" fill="#31453b"/><text x="98" y="291" text-anchor="middle" class="num">01</text>
+<g transform="translate(86,313)">
+  <ellipse cx="76" cy="78" rx="51" ry="35" fill="#789b70" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="121" cy="67" r="26" fill="#efe5bd" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="130" cy="61" r="3.5" class="ink"/><path d="M119 46 C118 11 148 0 160 22 M123 47 C139 17 176 16 182 42" class="line"/>
+  <path d="M160 22 l16 -10 M160 22 l18 8 M182 42 l18 -3 M182 42 l10 13" class="line"/>
+  <path d="M40 96 q-15 29 -38 30 M72 109 q-4 31 -28 39 M96 106 q9 31 31 37" class="thin"/>
+  <path d="M25 65 C3 41 12 22 30 31 C44 38 30 56 15 56 C0 55 -5 72 14 81" class="thin"/>
+  <path d="M15 81 C33 91 28 108 12 111" class="thin"/>
+</g>
+<text x="285" y="316" class="name">Cable-Tangle Whiskerling</text><text x="285" y="340" class="latin">Filamenta nodosa</text>
+<text x="285" y="368" class="note">Dwells behind desks. Forked hook-antennae comb loose charging</text>
+<text x="285" y="391" class="note">leads nightly, braiding three or more cables into a knot just</text>
+<text x="285" y="414" class="note">before the morning commute.</text>
+<line x1="285" x2="905" y1="432" y2="432" class="fine"/><text x="285" y="456" class="small">FIELD MARK · paired grappling antennae shaped for snagging flexible cords</text>
+
+<rect x="60" y="500" width="880" height="210" rx="8" class="box"/><rect x="60" y="500" width="76" height="30" fill="#31453b"/><text x="98" y="521" text-anchor="middle" class="num">02</text>
+<g transform="translate(83,535)">
+  <ellipse cx="83" cy="87" rx="55" ry="37" fill="#d4ab55" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="42" cy="78" r="23" fill="#efe5bd" stroke="#2e4036" stroke-width="4"/><circle cx="35" cy="73" r="3.5" class="ink"/>
+  <path d="M73 61 Q106 34 135 66 Q108 94 75 93 Z" fill="#f0dca1" stroke="#2e4036" stroke-width="3"/>
+  <path d="M111 52 q24 -29 44 -10 q12 12 -2 24 q-13 11 -36 7" class="thin"/>
+  <ellipse cx="155" cy="42" rx="13" ry="21" transform="rotate(42 155 42)" fill="#c9c3b1" stroke="#52655a" stroke-width="2"/><path d="M146 56 l-35 35" class="thin"/>
+  <path d="M58 111 q-7 25 -25 34 M94 119 q4 25 24 33 M121 107 q13 20 31 24" class="thin"/>
+</g>
+<text x="285" y="546" class="name">Teaspoon Pouchling</text><text x="285" y="570" class="latin">Cochlearium abscondita</text>
+<text x="285" y="598" class="note">Shelters beneath cutlery trays. Its spoon-shaped dorsal pouch</text>
+<text x="285" y="621" class="note">carries one teaspoon at dusk, depositing it behind appliances</text>
+<text x="285" y="644" class="note">where no sensible search begins.</text>
+<line x1="285" x2="905" y1="662" y2="662" class="fine"/><text x="285" y="686" class="small">FIELD MARK · rigid carrying pouch precisely curved to cradle a teaspoon bowl</text>
+
+<rect x="60" y="730" width="880" height="210" rx="8" class="box"/><rect x="60" y="730" width="76" height="30" fill="#31453b"/><text x="98" y="751" text-anchor="middle" class="num">03</text>
+<g transform="translate(83,765)">
+  <ellipse cx="85" cy="83" rx="53" ry="32" fill="#6d8e98" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="43" cy="76" r="21" fill="#efe5bd" stroke="#2e4036" stroke-width="4"/><circle cx="36" cy="71" r="3.5" class="ink"/>
+  <path d="M72 58 q8 -35 33 -29 q19 5 12 31 M99 58 q24 -29 44 -11 q13 12 1 26" fill="#dce7e4" stroke="#2e4036" stroke-width="3"/>
+  <path d="M62 105 q-20 12 -31 34 q13 9 27 -2 q8 -8 13 -22 M105 109 q9 31 33 35 q10 -14 -3 -24 q-9 -7 -18 -10" class="line"/>
+  <path d="M121 88 q27 4 43 -13" class="thin"/><path d="M164 75 q14 -9 24 1 q7 10 -4 18 q-13 8 -29 0" fill="#b65f4a" stroke="#2e4036" stroke-width="2"/>
+</g>
+<text x="285" y="776" class="name">Laundry Pair-Splitter</text><text x="285" y="800" class="latin">Gemellivora centrifuga</text>
+<text x="285" y="828" class="note">Rides warm laundry drums. Mismatched clamp-feet grip only one</text>
+<text x="285" y="851" class="note">sock of a pair, then drag it beneath nearby furniture during</text>
+<text x="285" y="874" class="note">the final spin cycle.</text>
+<line x1="285" x2="905" y1="892" y2="892" class="fine"/><text x="285" y="916" class="small">FIELD MARK · unequal clamp-feet; the larger grips knitted fabric without tearing</text>
+
+<rect x="60" y="960" width="880" height="210" rx="8" class="box"/><rect x="60" y="960" width="76" height="30" fill="#31453b"/><text x="98" y="981" text-anchor="middle" class="num">04</text>
+<g transform="translate(82,995)">
+  <ellipse cx="82" cy="83" rx="60" ry="28" fill="#b65f4a" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="35" cy="77" r="21" fill="#efe5bd" stroke="#2e4036" stroke-width="4"/><circle cx="29" cy="71" r="3.5" class="ink"/>
+  <ellipse cx="91" cy="100" rx="47" ry="13" fill="#d7c68c" stroke="#2e4036" stroke-width="3"/>
+  <path d="M54 70 q31 -24 70 -3 M55 80 q34 -6 73 14" class="thin"/>
+  <path d="M44 99 q-17 21 -33 24 M71 110 q-4 25 -25 37 M111 108 q10 23 33 29" class="thin"/>
+  <g fill="#d4ab55" stroke="#52655a" stroke-width="1.5"><circle cx="156" cy="44" r="7"/><circle cx="177" cy="62" r="5"/><circle cx="165" cy="88" r="6"/><circle cx="190" cy="101" r="4"/></g>
+  <path d="M147 50 q19 8 25 23 q5 12 -4 18 q-7 5 -3 18" class="thin" stroke-dasharray="4 5"/>
+</g>
+<text x="285" y="1006" class="name">Crumb Cartographer</text><text x="285" y="1030" class="latin">Mappa mica nocturna</text>
+<text x="285" y="1058" class="note">Forages across freshly wiped counters. A broad adhesive belly</text>
+<text x="285" y="1081" class="note">collects stray crumbs, which it redeposits as meticulous little</text>
+<text x="285" y="1104" class="note">maps of rooms already cleaned.</text>
+<line x1="285" x2="905" y1="1122" y2="1122" class="fine"/><text x="285" y="1146" class="small">FIELD MARK · tacky ventral pad; parallel whiskers align crumbs into tidy routes</text>
+
+<rect x="60" y="1190" width="880" height="210" rx="8" class="box"/><rect x="60" y="1190" width="76" height="30" fill="#31453b"/><text x="98" y="1211" text-anchor="middle" class="num">05</text>
+<g transform="translate(83,1225)">
+  <ellipse cx="82" cy="85" rx="55" ry="35" fill="#789b70" stroke="#2e4036" stroke-width="4"/>
+  <circle cx="40" cy="76" r="23" fill="#efe5bd" stroke="#2e4036" stroke-width="4"/><circle cx="34" cy="70" r="3.5" class="ink"/>
+  <g fill="#d45f4a" stroke="#2e4036" stroke-width="3"><path d="M67 55 l10 -34 l16 33 Z"/><path d="M91 52 l17 -31 l10 36 Z"/><path d="M115 60 l21 -24 l3 35 Z"/></g>
+  <path d="M31 60 q-18 -25 -31 -4 M30 65 q-28 -4 -30 13" class="thin"/>
+  <path d="M55 110 q-8 24 -27 34 M91 117 q2 24 22 35 M119 108 q15 17 31 18" class="thin"/>
+  <circle cx="174" cy="78" r="30" fill="#f0eee4" stroke="#52655a" stroke-width="3"/><path d="M174 78 l17 -10" class="line"/><path d="M174 42 v8 M174 106 v8 M138 78 h8 M202 78 h8" class="thin"/>
+</g>
+<text x="285" y="1236" class="name">Thermostat Button Grazer</text><text x="285" y="1260" class="latin">Gradus nudgens</text>
+<text x="285" y="1288" class="note">Loiters on hallway walls. Heat-sensing dorsal plates steer its</text>
+<text x="285" y="1311" class="note">blunt snout toward thermostat buttons, which it nudges exactly</text>
+<text x="285" y="1334" class="note">one degree whenever occupants leave.</text>
+<line x1="285" x2="905" y1="1352" y2="1352" class="fine"/><text x="285" y="1376" class="small">FIELD MARK · three thermal sails orient the animal toward the nearest warm control panel</text>
+
+<line x1="60" x2="940" y1="1425" y2="1425" class="rule"/>
+<text x="60" y="1451" font-family="Georgia,serif" font-size="14" fill="#4e5c55">Observation guidance: note the nuisance, admire the adaptation, and leave the tiny culprit entirely fictional.</text>
+</svg>
