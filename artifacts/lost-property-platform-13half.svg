@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500" viewBox="0 0 1000 1500" role="img" aria-labelledby="title desc">
+  <title id="title">Lost Property — Platform 13½</title>
+  <desc id="desc">A fictional railway lost-property notice containing exactly five illustrated impossible objects and administrative descriptions.</desc>
+  <defs>
+    <pattern id="paper" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="#f3efe3"/>
+      <circle cx="2" cy="3" r="0.6" fill="#d7d0bd" opacity=".45"/>
+      <circle cx="11" cy="9" r="0.45" fill="#d7d0bd" opacity=".35"/>
+    </pattern>
+    <style>
+      .ink{fill:#17231d}.muted{fill:#576359}.rule{stroke:#17231d;stroke-width:2}.thin{stroke:#314139;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .soft{stroke:#66736b;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+      .title{font:700 46px Georgia,serif;letter-spacing:.3px}.kicker{font:700 18px Arial,sans-serif;letter-spacing:2.4px}.sub{font:400 18px Georgia,serif}
+      .name{font:700 21px Georgia,serif}.ref{font:700 12px Arial,sans-serif;letter-spacing:1.5px}.body{font:400 16px Georgia,serif}.small{font:400 13px Arial,sans-serif}.footer{font:400 14px Georgia,serif}
+      .panel{fill:#faf7ee;stroke:#26352d;stroke-width:2}.tag{fill:#26352d}.tagtext{font:700 12px Arial,sans-serif;fill:#f7f2e5;letter-spacing:1.1px}
+    </style>
+  </defs>
+
+  <rect width="1000" height="1500" fill="url(#paper)"/>
+  <rect x="28" y="28" width="944" height="1444" rx="2" fill="none" stroke="#17231d" stroke-width="3"/>
+
+  <text x="60" y="76" class="kicker ink">NORTH BARROW &amp; DISTRICT RAILWAY</text>
+  <text x="60" y="132" class="title ink">Lost Property — Platform 13½</text>
+  <text x="60" y="168" class="sub muted">Central Lost Property Office · Notice LP/13½/09</text>
+  <line x1="60" y1="193" x2="940" y2="193" class="rule"/>
+  <text x="60" y="224" class="small muted">The following articles were received during routine platform clearance. Descriptions are supplied for identification only.</text>
+
+  <g transform="translate(60 258)">
+    <rect width="880" height="205" rx="4" class="panel"/>
+    <rect x="0" y="0" width="74" height="26" class="tag"/><text x="11" y="18" class="tagtext">NB-417</text>
+    <g transform="translate(30 38)">
+      <path d="M25 65 Q85 5 145 65 Q120 52 100 65 Q80 50 60 65 Q42 52 25 65Z" fill="#d4ddd5" stroke="#26352d" stroke-width="3"/>
+      <path d="M85 65 L85 135 Q85 153 101 153 Q116 153 116 139" class="thin"/>
+      <path d="M45 34 C38 10 58 -5 73 12 M80 25 C77 2 101 -10 113 8 M118 34 C124 10 143 9 149 28" class="soft"/>
+      <path d="M51 21 l-5 -14 m38 7 l1 -16 m39 18 l6 -14" class="soft"/>
+    </g>
+    <text x="205" y="55" class="name ink">Commuter’s Umbrella, Inverted Weather</text>
+    <text x="205" y="81" class="ref muted">ARTICLE 01 · FOLDING UMBRELLA</text>
+    <text x="205" y="116" class="body ink"><tspan x="205" dy="0">Black folding umbrella, apparently standard. When opened indoors it releases</tspan><tspan x="205" dy="24">yesterday’s rain upward, leaving the floor dry and ceiling briefly overcast.</tspan></text>
+    <line x1="205" y1="165" x2="842" y2="165" stroke="#c8c2b3" stroke-width="1"/>
+    <text x="205" y="187" class="small muted">Condition on receipt: dry; canopy faintly thundery.</text>
+  </g>
+
+  <g transform="translate(60 483)">
+    <rect width="880" height="205" rx="4" class="panel"/>
+    <rect x="0" y="0" width="74" height="26" class="tag"/><text x="11" y="18" class="tagtext">NB-422</text>
+    <g transform="translate(52 47)">
+      <circle cx="72" cy="65" r="51" fill="#e5d8ad" stroke="#26352d" stroke-width="3"/>
+      <circle cx="72" cy="65" r="42" fill="#fbf7e8" stroke="#657168" stroke-width="1.5"/>
+      <rect x="59" y="1" width="26" height="14" rx="5" fill="#e5d8ad" stroke="#26352d" stroke-width="3"/>
+      <path d="M72 65 L72 35 M72 65 L96 78" class="thin"/>
+      <path d="M36 65 h8 M100 65 h8 M72 29 v8 M72 94 v8" class="soft"/>
+      <path d="M86 6 C120 -6 137 4 145 24" class="soft"/>
+    </g>
+    <text x="205" y="55" class="name ink">Platform Clock, Pocket Size</text>
+    <text x="205" y="81" class="ref muted">ARTICLE 02 · BRASS POCKET WATCH</text>
+    <text x="205" y="116" class="body ink"><tspan x="205" dy="0">Brass pocket watch, outwardly conventional. It gains nine minutes whenever its</tspan><tspan x="205" dy="24">owner is late, then quietly returns them after departure.</tspan></text>
+    <line x1="205" y1="165" x2="842" y2="165" stroke="#c8c2b3" stroke-width="1"/>
+    <text x="205" y="187" class="small muted">Condition on receipt: ticking; apologetic by approximately nine minutes.</text>
+  </g>
+
+  <g transform="translate(60 708)">
+    <rect width="880" height="205" rx="4" class="panel"/>
+    <rect x="0" y="0" width="74" height="26" class="tag"/><text x="11" y="18" class="tagtext">NB-431</text>
+    <g transform="translate(40 48)">
+      <ellipse cx="86" cy="105" rx="67" ry="13" fill="#d8d3c8" opacity=".7"/>
+      <path d="M42 34 H132 L122 95 Q88 111 53 95Z" fill="#f8f4e9" stroke="#26352d" stroke-width="3"/>
+      <path d="M50 36 Q88 51 125 36" class="soft"/>
+      <path d="M70 50 C89 42 100 48 105 61 C98 73 85 74 72 67" class="thin"/>
+      <path d="M76 107 C72 125 92 130 98 112 M105 109 C108 124 119 128 126 115" class="soft"/>
+      <path d="M76 13 C66 1 73 -8 78 -17 M94 15 C104 2 95 -9 100 -19" class="soft"/>
+    </g>
+    <text x="205" y="55" class="name ink">Reciprocal Teacup</text>
+    <text x="205" y="81" class="ref muted">ARTICLE 03 · PORCELAIN CUP &amp; SAUCER</text>
+    <text x="205" y="116" class="body ink"><tspan x="205" dy="0">Porcelain cup with an inward handle. Tea poured inside appears beneath the</tspan><tspan x="205" dy="24">saucer, while the cup itself remains politely empty.</tspan></text>
+    <line x1="205" y1="165" x2="842" y2="165" stroke="#c8c2b3" stroke-width="1"/>
+    <text x="205" y="187" class="small muted">Condition on receipt: empty above; one damp ring below.</text>
+  </g>
+
+  <g transform="translate(60 933)">
+    <rect width="880" height="205" rx="4" class="panel"/>
+    <rect x="0" y="0" width="74" height="26" class="tag"/><text x="11" y="18" class="tagtext">NB-439</text>
+    <g transform="translate(30 52)">
+      <path d="M22 84 C27 56 37 39 57 34 C71 42 79 62 83 83 C67 99 38 100 22 84Z" fill="#8d674a" stroke="#26352d" stroke-width="3"/>
+      <path d="M91 84 C96 56 106 39 126 34 C140 42 148 62 152 83 C136 99 107 100 91 84Z" fill="#8d674a" stroke="#26352d" stroke-width="3"/>
+      <path d="M49 47 l20 18 M118 47 l20 18" stroke="#e7d7c5" stroke-width="3"/>
+      <path d="M65 117 C79 130 92 130 106 117" class="soft"/>
+      <path d="M102 111 l6 6 -6 6" class="soft"/>
+      <path d="M95 26 C84 15 72 15 62 26 M109 26 C121 15 133 15 144 26" class="soft"/>
+    </g>
+    <text x="205" y="55" class="name ink">Pair of Shoes, Shared Left Foot</text>
+    <text x="205" y="81" class="ref muted">ARTICLE 04 · BROWN LACE-UP SHOES</text>
+    <text x="205" y="116" class="body ink"><tspan x="205" dy="0">Two sensible brown shoes. Only one can be the left shoe at a time; turning</tspan><tspan x="205" dy="24">away causes them to exchange responsibility.</tspan></text>
+    <line x1="205" y1="165" x2="842" y2="165" stroke="#c8c2b3" stroke-width="1"/>
+    <text x="205" y="187" class="small muted">Condition on receipt: paired; orientation subject to observation.</text>
+  </g>
+
+  <g transform="translate(60 1158)">
+    <rect width="880" height="205" rx="4" class="panel"/>
+    <rect x="0" y="0" width="74" height="26" class="tag"/><text x="11" y="18" class="tagtext">NB-446</text>
+    <g transform="translate(31 49)">
+      <path d="M15 20 L58 8 L98 22 L143 9 L151 103 L108 115 L66 101 L22 114Z" fill="#e5dfc8" stroke="#26352d" stroke-width="3"/>
+      <path d="M58 8 L66 101 M98 22 L108 115" class="soft"/>
+      <path d="M31 86 C48 71 54 60 71 64 C91 69 95 50 112 51 C129 52 131 35 142 31" stroke="#b65349" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="31" cy="86" r="5" fill="#26352d"/><circle cx="142" cy="31" r="5" fill="#26352d"/>
+      <path d="M82 38 h20 v17 h-20z M88 43 h8 v7 h-8z" fill="#f7f2e5" stroke="#26352d" stroke-width="2"/>
+    </g>
+    <text x="205" y="55" class="name ink">Folded Map of the Missing Corridor</text>
+    <text x="205" y="81" class="ref muted">ARTICLE 05 · STATION MAP</text>
+    <text x="205" y="116" class="body ink"><tspan x="205" dy="0">Station map printed on both sides. Each fold adds a corridor between Platforms</tspan><tspan x="205" dy="24">7 and 8, although unfolding removes every trace.</tspan></text>
+    <line x1="205" y1="165" x2="842" y2="165" stroke="#c8c2b3" stroke-width="1"/>
+    <text x="205" y="187" class="small muted">Condition on receipt: folded twice; route provisionally present.</text>
+  </g>
+
+  <line x1="60" y1="1391" x2="940" y2="1391" class="rule"/>
+  <text x="60" y="1423" class="footer ink">Claims desk: weekdays 07:30–18:00. Applicants must state the reference number and one verifiable inconvenience.</text>
+  <text x="60" y="1448" class="footer ink">Unclaimed articles are returned to the timetable after 28 days. This notice is entirely fictional.</text>
+</svg>
