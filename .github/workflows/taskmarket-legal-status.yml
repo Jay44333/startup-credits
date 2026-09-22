@@ -1,0 +1,18 @@
+name: Taskmarket legal status
+on:
+  push:
+    branches: [taskmarket-legal-status]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch canonical legal bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS https://api.taskmarket.dev/api/legal/current | python3 -m json.tool
