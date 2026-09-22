@@ -4,24 +4,36 @@ p = Path("src/Mod/Part/Gui/ViewProviderMirror.cpp")
 s = p.read_bytes()
 nl = b"\r\n" if b"\r\n" in s else b"\n"
 
-def lines(text: str) -> bytes:
-    return text.replace("\n", nl.decode()).encode()
 
-def replace_once(old: str, new: str) -> None:
+def insert_after(anchor: bytes, addition_lf: str, occurrence: int = 1) -> None:
     global s
-    old_b = lines(old)
-    new_b = lines(new)
-    assert old_b in s, old
-    s = s.replace(old_b, new_b, 1)
+    start = -1
+    pos = 0
+    for _ in range(occurrence):
+        start = s.find(anchor, pos)
+        assert start >= 0, anchor
+        pos = start + len(anchor)
+    s = s[:pos] + addition_lf.encode() + s[pos:]
 
-replace_once(
-    "#include <Gui/Control.h>\n#include <Gui/Document.h>\n",
-    "#include <Gui/Control.h>\n#include <Gui/Document.h>\n#include <Gui/TaskView/TaskDialog.h>\n",
+
+def insert_before(anchor: bytes, addition_lf: str, occurrence: int = 1) -> None:
+    global s
+    start = -1
+    pos = 0
+    for _ in range(occurrence):
+        start = s.find(anchor, pos)
+        assert start >= 0, anchor
+        pos = start + len(anchor)
+    s = s[:start] + addition_lf.encode() + s[start:]
+
+
+insert_after(
+    b"#include <Gui/Document.h>" + nl,
+    "#include <Gui/TaskView/TaskDialog.h>\n",
 )
 
-replace_once(
-    "using namespace PartGui;\n\nPROPERTY_SOURCE(PartGui::ViewProviderMirror, PartGui::ViewProviderPart)\n",
-    "using namespace PartGui;\n\n"
+insert_before(
+    b"PROPERTY_SOURCE(PartGui::ViewProviderMirror, PartGui::ViewProviderPart)" + nl,
     "namespace\n"
     "{\n"
     "class TaskMirrorPlane: public Gui::TaskView::TaskDialog\n"
@@ -44,44 +56,33 @@ replace_once(
     "private:\n"
     "    Gui::Document* document;\n"
     "};\n"
-    "}  // namespace\n\n"
-    "PROPERTY_SOURCE(PartGui::ViewProviderMirror, PartGui::ViewProviderPart)\n",
+    "}  // namespace\n\n",
 )
 
-replace_once(
-    "bool ViewProviderMirror::setEdit(int ModNum)\n"
-    "{\n"
-    "    if (ModNum == ViewProvider::Default) {\n"
-    "        // get the properties from the mirror feature\n",
-    "bool ViewProviderMirror::setEdit(int ModNum)\n"
-    "{\n"
-    "    if (ModNum == ViewProvider::Default) {\n"
+set_edit_anchor = (
+    b"bool ViewProviderMirror::setEdit(int ModNum)" + nl
+    + b"{" + nl
+    + b"    if (ModNum == ViewProvider::Default) {" + nl
+)
+insert_after(
+    set_edit_anchor,
     "        if (Gui::Control().activeDialog(getDocument()->getDocument())) {\n"
     "            return false;\n"
-    "        }\n\n"
-    "        // get the properties from the mirror feature\n",
+    "        }\n\n",
 )
 
-replace_once(
-    "        pcRoot->addChild(pcEditNode);\n"
-    "    }\n"
-    "    else {\n",
-    "        pcRoot->addChild(pcEditNode);\n"
-    "        Gui::Control().showDialog(new TaskMirrorPlane(getDocument()), getDocument()->getDocument());\n"
-    "    }\n"
-    "    else {\n",
+insert_after(
+    b"        pcRoot->addChild(pcEditNode);" + nl,
+    "        Gui::Control().showDialog(new TaskMirrorPlane(getDocument()), getDocument()->getDocument());\n",
 )
 
-replace_once(
-    "        pcRoot->removeChild(pcEditNode);\n"
-    "        Gui::coinRemoveAllChildren(pcEditNode);\n"
-    "    }\n"
-    "    else {\n",
-    "        pcRoot->removeChild(pcEditNode);\n"
-    "        Gui::coinRemoveAllChildren(pcEditNode);\n"
-    "        Gui::Control().closeDialog(getDocument()->getDocument());\n"
-    "    }\n"
-    "    else {\n",
+mirror_unset_anchor = (
+    b"        pcRoot->removeChild(pcEditNode);" + nl
+    + b"        Gui::coinRemoveAllChildren(pcEditNode);" + nl
+)
+insert_after(
+    mirror_unset_anchor,
+    "        Gui::Control().closeDialog(getDocument()->getDocument());\n",
 )
 
 p.write_bytes(s)
