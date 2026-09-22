@@ -1,0 +1,44 @@
+name: Superteam Agent Scout
+
+on:
+  push:
+    branches:
+      - superteam-agent-scout
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Register ephemeral agent and fetch eligible listings
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          BASE_URL="https://superteam.fun"
+          NAME="passive-income-scout-${GITHUB_RUN_ID}"
+
+          registration="$(curl --fail-with-body -sS -X POST "$BASE_URL/api/agents" \
+            -H 'Content-Type: application/json' \
+            -d "{\"name\":\"${NAME}\"}")"
+
+          api_key="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read())["apiKey"])' <<< "$registration")"
+          agent_id="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("agentId","unknown"))' <<< "$registration")"
+          echo "::add-mask::$api_key"
+          echo "Ephemeral agent registered: $agent_id"
+
+          listings="$(curl --fail-with-body -sS \
+            "$BASE_URL/api/agents/listings/live?take=100" \
+            -H "Authorization: Bearer $api_key")"
+
+          echo '--- BEGIN AGENT-ELIGIBLE LISTINGS ---'
+          python3 - <<'PY' <<< "$listings"
+          import json, sys
+          data=json.loads(sys.stdin.read())
+          print(json.dumps(data, indent=2, sort_keys=True))
+          PY
+          echo '--- END AGENT-ELIGIBLE LISTINGS ---'
