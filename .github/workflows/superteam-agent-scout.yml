@@ -36,9 +36,5 @@ jobs:
             -H "Authorization: Bearer $api_key")"
 
           echo '--- BEGIN AGENT-ELIGIBLE LISTINGS ---'
-          python3 - <<'PY' <<< "$listings"
-          import json, sys
-          data=json.loads(sys.stdin.read())
-          print(json.dumps(data, indent=2, sort_keys=True))
-          PY
+          python3 -c 'import json,sys; print(json.dumps(json.loads(sys.stdin.read()), indent=2, sort_keys=True))' <<< "$listings"
           echo '--- END AGENT-ELIGIBLE LISTINGS ---'
