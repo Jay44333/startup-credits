@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A Tiny House Having a Very Bad Weather Day</title>
+<style>
+  :root{
+    --sky:#8fd3ff;--sky2:#eaf9ff;--ground:#79b866;--ink:#17221d;--house:#f1a66c;--roof:#6f4533;
+    --cloud-opacity:.12;--rain-opacity:0;--snow-opacity:0;--sun-opacity:1;--wind:0deg;--window:#ffe88a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+  body{background:#f7f5ee;display:grid;place-items:center;padding:clamp(14px,3vw,36px)}
+  .card{width:min(980px,100%);background:#fff;border:2px solid #17221d;border-radius:28px;overflow:hidden;box-shadow:0 18px 50px rgba(23,34,29,.14)}
+  header{padding:clamp(18px,3.5vw,34px) clamp(18px,4vw,42px) 16px;background:#fffdf7;border-bottom:1px solid #d9d5c9}
+  h1{font-size:clamp(28px,5vw,54px);line-height:.98;letter-spacing:-.045em;margin:0 0 10px;max-width:760px}
+  header p{margin:0;color:#56625c;max-width:680px;font-size:clamp(14px,1.8vw,18px);line-height:1.45}
+  .scene{position:relative;isolation:isolate;aspect-ratio:16/9;min-height:360px;overflow:hidden;background:linear-gradient(var(--sky),var(--sky2) 68%,var(--ground) 68%);transition:background .7s ease}
+  .scene::after{content:"";position:absolute;inset:68% 0 0;background:var(--ground);z-index:-1;transition:background .5s ease}
+  .sun{position:absolute;left:10%;top:12%;width:82px;height:82px;border-radius:50%;background:#ffd64e;box-shadow:0 0 0 18px rgba(255,214,78,.15);opacity:var(--sun-opacity);transition:opacity .45s ease,transform .8s ease;transform:rotate(var(--wind))}
+  .clouds{position:absolute;inset:4% 0 auto 0;height:170px;opacity:var(--cloud-opacity);transition:opacity .5s ease}
+  .cloud{position:absolute;width:190px;height:58px;border-radius:999px;background:#dce3e6;filter:drop-shadow(0 9px 0 rgba(126,143,151,.14));transition:transform .75s ease}
+  .cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}
+  .cloud:before{width:76px;height:76px;left:34px;top:-30px}.cloud:after{width:95px;height:95px;right:32px;top:-44px}
+  .cloud.one{left:5%;top:40px;transform:translateX(calc(var(--storm-shift, 0) * 1px))}.cloud.two{right:2%;top:20px;transform:translateX(calc(var(--storm-shift, 0) * -1px)) scale(.8)}
+  .weather-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .rain{opacity:var(--rain-opacity);transition:opacity .45s ease;background-image:repeating-linear-gradient(112deg,transparent 0 20px,rgba(65,113,156,.72) 21px 23px,transparent 24px 45px);background-size:52px 42px;transform:translateY(-8px);animation:rain .55s linear infinite}
+  .snow{opacity:var(--snow-opacity);transition:opacity .5s ease;background-image:radial-gradient(circle,#fff 0 3px,transparent 3.5px),radial-gradient(circle,#fff 0 2px,transparent 2.5px);background-size:48px 48px,70px 70px;background-position:0 0,23px 19px;animation:snow 4s linear infinite}
+  .yard{position:absolute;inset:auto 0 0;height:32%;z-index:1}
+  .path{position:absolute;left:50%;bottom:-2%;width:120px;height:130%;background:#e7d2a4;clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);transform:translateX(-50%);transition:filter .5s ease}
+  .house{position:absolute;left:50%;bottom:19%;width:min(44%,330px);min-width:230px;aspect-ratio:1.18;transform:translateX(-50%) rotate(var(--house-tilt,0deg));transform-origin:50% 100%;transition:transform .65s cubic-bezier(.2,.9,.25,1.2)}
+  .body{position:absolute;inset:28% 5% 0;background:var(--house);border:5px solid var(--ink);border-radius:4px 4px 12px 12px;transition:background .5s ease}
+  .roof{position:absolute;left:-3%;right:-3%;top:3%;height:44%;background:var(--roof);border:5px solid var(--ink);clip-path:polygon(50% 0,100% 85%,92% 100%,50% 28%,8% 100%,0 85%);transition:transform .6s ease;transform:rotate(var(--roof-tilt,0deg));transform-origin:50% 80%}
+  .door{position:absolute;left:41%;bottom:0;width:24%;height:52%;background:#6f4533;border:4px solid var(--ink);border-bottom:0;border-radius:7px 7px 0 0}.door:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:#f7d46a;right:8px;top:48%}
+  .window{position:absolute;top:19%;width:22%;height:27%;background:var(--window);border:4px solid var(--ink);transition:background .4s ease}.window:before,.window:after{content:"";position:absolute;background:var(--ink)}.window:before{width:3px;top:0;bottom:0;left:50%}.window:after{height:3px;left:0;right:0;top:50%}.w1{left:10%}.w2{right:10%}
+  .chimney{position:absolute;right:18%;top:8%;width:14%;height:33%;background:#a85f4c;border:4px solid var(--ink);z-index:-1;transition:transform .6s ease;transform:rotate(var(--chimney-tilt,0deg));transform-origin:bottom}
+  .smoke{position:absolute;right:9%;top:-14%;font-size:38px;opacity:.55;transform:translateX(var(--smoke-x,0px));transition:transform .6s ease,opacity .4s ease}
+  .tree{position:absolute;left:10%;bottom:12%;width:90px;height:190px;transform:rotate(var(--tree-tilt,0deg));transform-origin:50% 100%;transition:transform .65s ease}.tree .trunk{position:absolute;left:38px;bottom:0;width:18px;height:94px;background:#79533f;border:4px solid var(--ink);border-radius:9px}.tree .crown{position:absolute;left:2px;top:0;width:88px;height:112px;background:#4f9b5c;border:4px solid var(--ink);border-radius:56% 44% 52% 48%}
+  .mailbox{position:absolute;right:11%;bottom:14%;width:82px;height:98px;transition:transform .6s ease}.mailbox .post{position:absolute;width:10px;height:58px;background:#765443;border:3px solid var(--ink);left:34px;bottom:0}.mailbox .box{position:absolute;left:0;top:0;width:70px;height:42px;background:#58748d;border:4px solid var(--ink);border-radius:24px 24px 7px 7px}.mailbox .flag{position:absolute;right:0;top:3px;width:7px;height:34px;background:#d9554f;border:2px solid var(--ink);transform-origin:bottom;transform:rotate(var(--flag-tilt,0deg));transition:transform .5s ease}.mailbox .flag:before{content:"";position:absolute;width:23px;height:15px;background:#d9554f;border:2px solid var(--ink);right:-2px;top:-2px}
+  .surprise{position:absolute;right:9%;bottom:27%;width:58px;height:31px;border:4px solid var(--ink);border-bottom:0;border-radius:58px 58px 0 0;background:#f5c84c;opacity:0;z-index:3;transform:translateY(18px) rotate(-8deg);transition:opacity .45s ease,transform .55s ease;filter:drop-shadow(0 2px 0 rgba(255,255,255,.7));font-size:0}.surprise:before{content:"";position:absolute;left:25px;top:27px;width:4px;height:39px;background:var(--ink);border-radius:3px}.surprise:after{content:"";position:absolute;left:25px;top:58px;width:17px;height:11px;border:4px solid var(--ink);border-left:0;border-top:0;border-radius:0 0 12px 0}
+  .puddle{position:absolute;left:18%;bottom:5%;width:160px;height:26px;border-radius:50%;background:rgba(72,132,170,.35);opacity:0;transform:scale(.5);transition:opacity .5s ease,transform .6s ease}
+  .snowbank{position:absolute;inset:auto 0 0;height:28%;background:linear-gradient(transparent 0 20%,#f9fcff 22%);opacity:0;transition:opacity .5s ease;z-index:0}
+  .status{position:absolute;top:18px;right:18px;z-index:4;background:rgba(255,255,255,.88);border:2px solid var(--ink);border-radius:999px;padding:8px 13px;font-size:14px;font-weight:800;box-shadow:0 4px 0 rgba(23,34,29,.12)}
+  .controls{padding:22px clamp(18px,4vw,42px) 28px;background:#fffdf7}
+  .control-row{display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:24px;align-items:center}
+  label{font-weight:900;font-size:17px}.reading{display:block;margin-top:4px;color:#59655e;font-weight:600;font-size:14px}
+  input[type=range]{width:100%;accent-color:#385f50;cursor:pointer;min-height:34px}
+  input[type=range]:focus-visible{outline:4px solid #ffbd2e;outline-offset:5px;border-radius:999px}
+  .scale{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#5f6964;margin-top:5px}.scale span:nth-child(2){text-align:center}
+  .note{margin:16px 0 0;color:#65706b;font-size:13px;line-height:1.45}
+  body[data-weather="rain"] .scene::after{background:#56855a}body[data-weather="snow"] .scene::after{background:#e9f2f5}body[data-weather="rain"]{--sky:#657d91;--sky2:#c7d2d8;--ground:#56855a;--cloud-opacity:1;--rain-opacity:.92;--snow-opacity:0;--sun-opacity:.08;--window:#ffe88a;--house-tilt:-1.7deg;--roof-tilt:1.4deg;--chimney-tilt:4deg;--tree-tilt:7deg;--flag-tilt:38deg;--smoke-x:18px;--storm-shift:20}
+  body[data-weather="rain"] .puddle{opacity:1;transform:scale(1)}body[data-weather="rain"] .surprise{opacity:1;transform:translateY(0) rotate(-8deg)}body[data-weather="rain"] .path{filter:saturate(.65) brightness(.9)}
+  body[data-weather="snow"]{--sky:#bacbd8;--sky2:#eaf0f4;--ground:#e9f2f5;--cloud-opacity:.65;--rain-opacity:0;--snow-opacity:1;--sun-opacity:.22;--window:#ffd66a;--house-tilt:.6deg;--roof-tilt:-.7deg;--chimney-tilt:-1deg;--tree-tilt:-2deg;--flag-tilt:-12deg;--smoke-x:-5px;--storm-shift:-7}
+  body[data-weather="snow"] .snowbank{opacity:1}body[data-weather="snow"] .tree .crown{box-shadow:inset 0 22px 0 #f8fbfd}body[data-weather="snow"] .roof{filter:brightness(1.16)}
+  @keyframes rain{to{background-position:26px 42px}}@keyframes snow{to{background-position:48px 96px,93px 89px}}
+  @media(max-width:650px){.scene{min-height:390px;aspect-ratio:4/5}.house{width:62%;bottom:22%}.tree{left:3%;transform:scale(.75) rotate(var(--tree-tilt,0deg));transform-origin:50% 100%}.mailbox{right:3%;transform:scale(.78)}.surprise{right:5%;bottom:31%;}.control-row{grid-template-columns:1fr;gap:12px}.sun{left:6%;top:10%;width:64px;height:64px}.status{top:12px;right:12px;font-size:12px}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body data-weather="sunshine">
+<main class="card">
+  <header>
+    <h1>A Tiny House Having a Very Bad Weather Day</h1>
+    <p>One little weather slider. One extremely opinionated house. No meteorologist was consulted.</p>
+  </header>
+  <section class="scene" aria-label="Illustration of a tiny house whose surroundings react to the selected weather">
+    <div class="status" id="status" aria-live="polite">Current weather: Sunshine</div>
+    <div class="sun" aria-hidden="true"></div>
+    <div class="clouds" aria-hidden="true"><div class="cloud one"></div><div class="cloud two"></div></div>
+    <div class="weather-layer rain" aria-hidden="true"></div>
+    <div class="weather-layer snow" aria-hidden="true"></div>
+    <div class="snowbank" aria-hidden="true"></div>
+    <div class="puddle" aria-hidden="true"></div>
+    <div class="tree" aria-hidden="true"><div class="trunk"></div><div class="crown"></div></div>
+    <div class="house" aria-hidden="true">
+      <div class="chimney"></div><div class="smoke">☁</div><div class="roof"></div><div class="body"><div class="window w1"></div><div class="window w2"></div><div class="door"></div></div>
+    </div>
+    <div class="mailbox" aria-hidden="true"><div class="post"></div><div class="box"></div><div class="flag"></div></div>
+    <div class="surprise" aria-hidden="true" title="The mailbox has deployed its own umbrella">☂</div>
+    <div class="yard" aria-hidden="true"><div class="path"></div></div>
+  </section>
+  <section class="controls">
+    <div class="control-row">
+      <div><label for="weather">Weather control</label><span class="reading" id="reading">Sunshine — the house is pretending this is fine.</span></div>
+      <div>
+        <input id="weather" type="range" min="0" max="100" step="1" value="0" aria-describedby="reading scale" />
+        <div class="scale" id="scale"><span>Sunshine</span><span>Rain</span><span>Snow</span></div>
+      </div>
+    </div>
+    <p class="note">Keyboard tip: focus the slider and use the arrow keys. The scene remains fully functional when reduced-motion is enabled.</p>
+  </section>
+</main>
+<script>
+  const slider = document.getElementById('weather');
+  const status = document.getElementById('status');
+  const reading = document.getElementById('reading');
+  const copy = {
+    sunshine: 'Sunshine — the house is pretending this is fine.',
+    rain: 'Rain — the tree leans, a puddle forms, and the mailbox deploys an umbrella.',
+    snow: 'Snow — the yard disappears and the windows glow like tiny defiant toast.'
+  };
+  function weatherFor(v){ v=Number(v); return v < 34 ? 'sunshine' : v < 67 ? 'rain' : 'snow'; }
+  function update(){
+    const w = weatherFor(slider.value);
+    document.body.dataset.weather = w;
+    const pretty = w[0].toUpperCase()+w.slice(1);
+    status.textContent = 'Current weather: ' + pretty;
+    reading.textContent = copy[w];
+  }
+  slider.addEventListener('input', update);
+  const seeded = new URLSearchParams(location.search).get('weather');
+  if (seeded !== null && Number.isFinite(Number(seeded))) slider.value = Math.max(0, Math.min(100, Number(seeded)));
+  update();
+</script>
+</body>
+</html>
