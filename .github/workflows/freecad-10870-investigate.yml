@@ -1,0 +1,26 @@
+name: Investigate FreeCAD 10870
+
+on:
+  push:
+    branches:
+      - freecad-10870-investigate
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Clone history and locate /D preservation change
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone https://github.com/FreeCAD/FreeCAD.git freecad
+          cd freecad
+          echo '--- commits adding/removing OriginalCmdInstDir ---'
+          git log --all --date=iso --format='%H %ad %s' -S'OriginalCmdInstDir' -- package/WindowsInstaller/include/init.nsh src/WindowsInstaller/include/init.nsh | head -20
+          echo '--- current relevant lines ---'
+          grep -n -C 3 'OriginalCmdInstDir' package/WindowsInstaller/include/init.nsh
