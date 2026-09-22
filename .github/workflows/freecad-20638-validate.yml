@@ -1,0 +1,69 @@
+name: Validate FreeCAD 20638 patch
+
+on:
+  push:
+    branches:
+      - freecad-20638-validate
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Clone FreeCAD and apply candidate patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/FreeCAD/FreeCAD.git freecad
+          cd freecad
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/Mod/Part/Gui/ViewProviderMirror.cpp')
+          s = p.read_text()
+
+          old = '#include <Gui/Control.h>\n#include <Gui/Document.h>\n'
+          new = '#include <Gui/Control.h>\n#include <Gui/Document.h>\n#include <Gui/TaskView/TaskDialog.h>\n'
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = 'using namespace PartGui;\n\nPROPERTY_SOURCE(PartGui::ViewProviderMirror, PartGui::ViewProviderPart)\n'
+          new = '''using namespace PartGui;\n\nnamespace\n{\nclass TaskMirrorPlane: public Gui::TaskView::TaskDialog\n{\npublic:\n    explicit TaskMirrorPlane(Gui::Document* document)\n        : document(document)\n    {}\n\n    bool reject() override\n    {\n        if (document) {\n            document->resetEdit();\n        }\n        return false;\n    }\n\n    QDialogButtonBox::StandardButtons getStandardButtons() const override\n    {\n        return QDialogButtonBox::Close;\n    }\n\nprivate:\n    Gui::Document* document;\n};\n}  // namespace\n\nPROPERTY_SOURCE(PartGui::ViewProviderMirror, PartGui::ViewProviderPart)\n'''
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = 'bool ViewProviderMirror::setEdit(int ModNum)\n{\n    if (ModNum == ViewProvider::Default) {\n        // get the properties from the mirror feature\n'
+          new = 'bool ViewProviderMirror::setEdit(int ModNum)\n{\n    if (ModNum == ViewProvider::Default) {\n        if (Gui::Control().activeDialog(getDocument()->getDocument())) {\n            return false;\n        }\n\n        // get the properties from the mirror feature\n'
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = '        pcRoot->addChild(pcEditNode);\n    }\n    else {\n'
+          new = '        pcRoot->addChild(pcEditNode);\n        Gui::Control().showDialog(new TaskMirrorPlane(getDocument()), getDocument()->getDocument());\n    }\n    else {\n'
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          old = '        pcRoot->removeChild(pcEditNode);\n        Gui::coinRemoveAllChildren(pcEditNode);\n    }\n    else {\n'
+          new = '        pcRoot->removeChild(pcEditNode);\n        Gui::coinRemoveAllChildren(pcEditNode);\n        Gui::Control().closeDialog(getDocument()->getDocument());\n    }\n    else {\n'
+          assert old in s
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+          PY
+
+          git diff --check
+          git diff -- src/Mod/Part/Gui/ViewProviderMirror.cpp
+
+      - name: Verify intended behavior hooks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd freecad
+          file=src/Mod/Part/Gui/ViewProviderMirror.cpp
+          grep -F 'return QDialogButtonBox::Close;' "$file"
+          grep -F 'document->resetEdit();' "$file"
+          grep -F 'Gui::Control().showDialog(new TaskMirrorPlane' "$file"
+          grep -F 'Gui::Control().closeDialog(getDocument()->getDocument());' "$file"
+          grep -F 'Gui::Control().activeDialog(getDocument()->getDocument())' "$file"
