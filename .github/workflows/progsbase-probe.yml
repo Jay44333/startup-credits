@@ -19,48 +19,33 @@ jobs:
           python3 - <<'PY'
           import json, urllib.request, urllib.error
 
-          def post(url, payload):
+          def post(label, url, payload):
               data=json.dumps(payload,separators=(',',':')).encode()
               req=urllib.request.Request(url,data=data,headers={'Content-Type':'application/json','User-Agent':'progsbase-bounty-probe/1.0'},method='POST')
               try:
                   with urllib.request.urlopen(req,timeout=20) as r:
                       body=r.read().decode('utf-8','replace')
-                      print('URL',url)
-                      print('STATUS',r.status)
-                      print('PAYLOAD',json.dumps(payload,ensure_ascii=True))
-                      print('BODY',body[:4000])
+                      print('LABEL',label,'STATUS',r.status,'PAYLOAD',json.dumps(payload,ensure_ascii=True),'BODY',body[:2000])
               except urllib.error.HTTPError as e:
-                  print('URL',url)
-                  print('STATUS',e.code)
-                  print('PAYLOAD',json.dumps(payload,ensure_ascii=True))
-                  print('BODY',e.read().decode('utf-8','replace')[:4000])
+                  print('LABEL',label,'STATUS',e.code,'PAYLOAD',json.dumps(payload,ensure_ascii=True),'BODY',e.read().decode('utf-8','replace')[:1200])
               except Exception as e:
-                  print('URL',url)
-                  print('ERROR',repr(e))
+                  print('LABEL',label,'ERROR',repr(e))
               print('---')
 
-          json_urls=[
-            'https://run.progsbase.com/no.inductive.idea10.programs/JSON/0.5.14/IsValidJSON',
-            'https://run.progsbase.com/no.inductive.idea10.programs/JSON/latest/IsValidJSON',
-          ]
-          json_cases=[
-            '{"a":1}',
-            '"\\uABCD"',
-            '1e113',
-            '9.99999999999999e113',
-            '1e114',
-            '[1,2,3]',
-          ]
-          for url in json_urls:
-              for s in json_cases:
-                  post(url, {'json':s,'message':{'string':''}})
+          jurl='https://run.progsbase.com/no.inductive.idea10.programs/JSON/0.5.14/IsValidJSON'
+          nurl='https://run.progsbase.com/no.inductive.idea10.programs/numbers/0.1.35/CreateNumberFromDecimalStringWithCheck'
 
-          number_urls=[
-            'https://run.progsbase.com/no.inductive.idea10.programs/numbers/0.1.35/CreateNumberFromDecimalStringWithCheck',
-            'https://run.progsbase.com/no.inductive.idea10.programs/numbers/latest/CreateNumberFromDecimalStringWithCheck',
-          ]
-          number_cases=['1.2','1e113','9.99999999999999e113','1e114','1e1000','-1e114','+1.2']
-          for url in number_urls:
-              for s in number_cases:
-                  post(url, {'string':s,'decimalReference':{'numberValue':0},'message':{'string':''}})
+          # Determine the positional wire format first using ordinary valid inputs.
+          post('json-pos-string-refobj', jurl, ['{"a":1}', {'string':''}])
+          post('json-pos-chararray-refobj', jurl, [list('{"a":1}'), {'string':[]}])
+          post('json-wrapped-object', jurl, [{'json':'{"a":1}','message':{'string':''}}])
+          post('num-pos-string-refobj', nurl, ['1.2', {'numberValue':0}, {'string':''}])
+          post('num-pos-chararray-refobj', nurl, [list('1.2'), {'numberValue':0}, {'string':[]}])
+          post('num-wrapped-object', nurl, [{'string':'1.2','decimalReference':{'numberValue':0},'message':{'string':''}}])
+
+          # If positional strings are accepted, exercise the candidate boundary cases.
+          for s in ['1e113','9.99999999999999e113','1e114','1e1000','-1e114','+1.2']:
+              post('num-case-'+s, nurl, [s, {'numberValue':0}, {'string':''}])
+          for s in ['1e113','9.99999999999999e113','1e114','[1,2,3]','"\\uABCD"']:
+              post('json-case-'+s, jurl, [s, {'string':''}])
           PY
