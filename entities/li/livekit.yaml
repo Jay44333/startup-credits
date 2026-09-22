@@ -64,7 +64,8 @@ offers:
               minor_units: 700000
             kind: exact
       consideration:
-        kind: none
+        kind: unknown
+        description: Approved startups must keep a card on file to enroll, and standard rates may apply after included credits are exhausted.
     eligibility:
       rule:
         criterion_id: cri_01
@@ -77,7 +78,7 @@ offers:
     access:
       availability: public
       method: form
-      instructions: Apply through the LiveKit Startup Program page. Approved startups receive a promo code and enter it at checkout when starting Cloud Scale.
+      instructions: Apply through the LiveKit Startup Program page. Approved startups receive a promo code, keep a card on file, and enter the code at checkout when starting Cloud Scale.
       url: https://livekit.com/startups
     source_ids:
       - src_9b42e6d14ad8a8083a827ea9aee1e7d73350b22281103ecf6c1a7198178d1f7b
