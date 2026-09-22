@@ -1,0 +1,66 @@
+name: Progsbase bounty probe
+
+on:
+  push:
+    branches:
+      - progsbase-probe-20260922
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe current bounty functions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.error
+
+          def post(url, payload):
+              data=json.dumps(payload,separators=(',',':')).encode()
+              req=urllib.request.Request(url,data=data,headers={'Content-Type':'application/json','User-Agent':'progsbase-bounty-probe/1.0'},method='POST')
+              try:
+                  with urllib.request.urlopen(req,timeout=20) as r:
+                      body=r.read().decode('utf-8','replace')
+                      print('URL',url)
+                      print('STATUS',r.status)
+                      print('PAYLOAD',json.dumps(payload,ensure_ascii=True))
+                      print('BODY',body[:4000])
+              except urllib.error.HTTPError as e:
+                  print('URL',url)
+                  print('STATUS',e.code)
+                  print('PAYLOAD',json.dumps(payload,ensure_ascii=True))
+                  print('BODY',e.read().decode('utf-8','replace')[:4000])
+              except Exception as e:
+                  print('URL',url)
+                  print('ERROR',repr(e))
+              print('---')
+
+          json_urls=[
+            'https://run.progsbase.com/no.inductive.idea10.programs/JSON/0.5.14/IsValidJSON',
+            'https://run.progsbase.com/no.inductive.idea10.programs/JSON/latest/IsValidJSON',
+          ]
+          json_cases=[
+            '{"a":1}',
+            '"\\uABCD"',
+            '1e113',
+            '9.99999999999999e113',
+            '1e114',
+            '[1,2,3]',
+          ]
+          for url in json_urls:
+              for s in json_cases:
+                  post(url, {'json':s,'message':{'string':''}})
+
+          number_urls=[
+            'https://run.progsbase.com/no.inductive.idea10.programs/numbers/0.1.35/CreateNumberFromDecimalStringWithCheck',
+            'https://run.progsbase.com/no.inductive.idea10.programs/numbers/latest/CreateNumberFromDecimalStringWithCheck',
+          ]
+          number_cases=['1.2','1e113','9.99999999999999e113','1e114','1e1000','-1e114','+1.2']
+          for url in number_urls:
+              for s in number_cases:
+                  post(url, {'string':s,'decimalReference':{'numberValue':0},'message':{'string':''}})
+          PY
