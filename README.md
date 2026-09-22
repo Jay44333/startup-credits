@@ -1,142 +1,63 @@
-<h1 align="center">Startup Credits</h1>
+# Cascade — Alexa+ Disruption Recovery Agent
 
-<p align="center">
-  <b>The open registry of startup programs</b><br>
-  <sub><em>Never pay the stranger price</em></sub>
-</p>
+**One change. The rest of your day recovers.**
 
-<p align="center">
-  <a href="https://sourcey.com/startup-credits">Browse startup credits</a> ·
-  <a href="https://sourcey.com/companies">Companies</a> ·
-  <a href="https://sourcey.com/startup-credits.json">startup-credits.json</a> ·
-  <a href="https://sourcey.com/llms.txt">llms.txt</a> ·
-  <a href="https://mcp.sourcey.com/mcp">MCP</a> ·
-  <a href="https://api.sourcey.com/openapi.yml">API</a>
-</p>
+Cascade is a simulated Alexa+ experience for the 2026 Amazon Developer Hackathon. It models the hard part of disruption recovery: dependency reasoning, autonomous multi-service recovery, human approval boundaries, state across turns, and compensation/rollback.
 
-<p align="center">
-  <!-- Counts are read live from the published release; nothing here is kept by hand.
-       The count comes from the list envelope, not the bulk dataset: the full artifact is
-       megabytes and a badge fetch times out on it. -->
-  <img alt="entities on record" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.sourcey.com%2Fv1%2Fentities%3Flimit%3D1&query=%24.summary.entity_count&label=entities%20on%20record&style=flat-square&labelColor=0a0908&color=d0231c">
-  <img alt="last change" src="https://img.shields.io/github/last-commit/sourcey/startup-credits?style=flat-square&labelColor=0a0908&color=176b45&label=last%20change">
-  <img alt="changes per month" src="https://img.shields.io/github/commit-activity/m/sourcey/startup-credits?style=flat-square&labelColor=0a0908&color=176b45&label=changes%2Fmonth">
-  <img alt="data licence CC BY 4.0" src="https://img.shields.io/badge/data-CC%20BY%204.0-6a645d?style=flat-square&labelColor=0a0908">
-</p>
+Live demo: https://cascade-vwm225.v2.appdeploy.ai/
 
----
+## Core demo
 
-Every tool has two prices. The one on the pricing page, and the one startups
-actually pay once somebody tells them the program exists.
+Run: `My flight is delayed four hours. Keep the rest of my day intact.`
 
-The second price isn't a secret. It's just spread across a few hundred vendor
-pages, worded differently every time, and quietly revised whenever the vendor
-feels like it. So we write it down. One file per Entity, every fact carrying the
-page it came from and the day we read it. Published companies appear in
-[Sourcey](https://sourcey.com/companies), alongside their offers, capabilities,
-assessments and evidence.
+Cascade marks downstream commitments at risk, parses the stated delay, builds a recovery plan, and automatically executes safe reversible actions across simulated Calendar, Transport, Tasks, Delivery and Smart Home tools. It pauses before held reservations, paid actions, cancellations, or external messages.
 
-Nothing here is for sale. Tiers come from evidence and are never influenced by
-payment, and the [rules](https://sourcey.com/policies) are published as catalog
-records with their own revision digests, exactly like the data they govern.
+Then run: `Actually, I’ll take a rideshare instead.`
 
-## What a record looks like
+The second turn replans from the **current mutated context**, not the original schedule.
 
-```yaml
-# entities/at/atlassian.yaml
-schema_version: sourcey.entity-authoring/v1alpha1
-entity:
-  entity_id: ent_…
-  slug: atlassian
-  slug_aliases: []
-  name: Atlassian
-  domains:
-    - value: atlassian.com
-      role: primary
-      valid_from: 2026-01-01T00:00:00.000Z
-  category: productivity
-profile:
-  summary: Collaboration and developer tools for software teams.
-  description: Atlassian makes collaboration and developer tools for software teams.
-  links:
-    site: https://www.atlassian.com/
-sources:
-  - source_id: src_0ae96c1d…
-    url: https://www.atlassian.com/software/startups
-offers:
-  - title: Atlassian for Startups
-    summary: Eligible startups can get Atlassian Cloud products (including Premium
-      editions of Jira, Confluence, Loom, Bitbucket, and more) for $0 for 12 months
-      for up to 50 users.
-    eligibility:
-      statement: Must not be an existing Atlassian paid customer, must be VC funded
-        or associated with a partner accelerator/incubator, and must not have raised
-        more than $10 million in external funding.
+## Architecture
+
+1. Persistent synthetic context in `localStorage`.
+2. Deterministic planner with scenario/intent routing and delay parsing.
+3. Typed simulated tool vocabulary with `SAFE`, `CONFIRM`, and `BLOCKED` risk levels.
+4. Executor with human approval gates and explicit authority boundaries.
+5. Audit receipt with compensation metadata only for reversible actions.
+
+Simulated tools include `contacts.lookup`, `calendar.update_event`, `transport.reschedule_pickup`, `transport.switch_to_rideshare`, `tasks.update`, `household.update_routine`, `delivery.reschedule`, `reservations.modify`, and `messaging.send`.
+
+Read-only contact lookup and external message sending are intentionally non-reversible.
+
+## Scenarios
+
+- Flight delayed four hours — multi-service recovery plus second-turn rideshare replan.
+- School closed unexpectedly — protect a hard client commitment while negotiating childcare.
+- Meeting moved two hours earlier — preserve prep time and commute.
+- Heavy rain from 4 PM — move flexible plans while explicitly blocking a soccer cancellation controlled by the coach.
+
+## Alexa+ simulation path
+
+This project uses the hackathon-permitted simulated Alexa+ web experience path. It does not claim to call production Alexa+ services or real third-party accounts. All service calls are deterministic simulations over synthetic data so the agent loop can be judged without credentials, paid APIs, or personal data.
+
+Browser speech recognition is used when available for microphone input, and SpeechSynthesis can read the final recovery summary aloud. Text input always works.
+
+## Run locally
+
+```bash
+npm install
+npm run dev
 ```
 
-Eligibility conditions are represented explicitly rather than hidden in a
-marketing summary, and every factual value traces back to material at the URL
-in `sources`. Neutral Sourcey prose may faithfully summarize those cited facts;
-it is not presented as a vendor quotation.
+Build:
 
-## Getting it
-
-Browse it at [sourcey.com/startup-credits](https://sourcey.com/startup-credits), by record or by category. Or ask
-for one record and get that same offer back:
-
-```sh
-curl -s https://api.sourcey.com/v1/entities/by-slug/atlassian \
-  | jq -r '.data.offers[0].summary'
+```bash
+npm run build
 ```
 
-> Eligible startups can get Atlassian Cloud products (including Premium editions
-> of Jira, Confluence, Loom, Bitbucket, and more) for $0 for 12 months for up to
-> 50 users.
+## Privacy and safety
 
-No key and no signup, for you or for your agents. There is an
-[OpenAPI](https://api.sourcey.com/openapi.yml) surface, an
-[MCP server](https://mcp.sourcey.com/mcp) for assistants, a
-[change feed](https://sourcey.com/changes.ndjson) for watching terms move,
-[llms.txt](https://sourcey.com/llms.txt) for models, and a
-[guide](https://sourcey.com/SKILL.md) for agents working the data directly.
+Cascade collects no personal data and requires no account. Demo data is synthetic and stored only in the browser. Consequential actions are simulated and require confirmation. The UI never claims a blocked integration succeeded.
 
-Terms move. Confirm with the vendor before you rely on it.
+## License
 
-Facts are [CC BY 4.0](DATA-LICENSE.md) and training on them is welcome. Quote the
-`offer_id` and `revision_digest` and your citation still means something after
-the offer moves:
-
-    sourcey.com · <offer_id> @ <revision_digest> · CC BY 4.0
-
-## Fixing or adding one
-
-Copy a nearby file under `entities/`, keep the shape, open a pull request. CI
-checks only what you changed and hands back real field errors, so you can push
-corrections without waiting on a maintainer.
-
-Two rules carry most of the weight. Every fact needs public supporting material
-at a URL in `sources`, and if the source does not substantiate it, it does not go
-in. Guessed amounts and invented eligibility read exactly like checked ones,
-which is why they get closed. Sourcey-written titles, summaries, descriptions,
-and taxonomy labels may use neutral wording, but they still need cited factual
-support. [CONTRIBUTING.md](CONTRIBUTING.md) has the rest, including a preflight
-that runs the same verifier CI uses. Correcting a stale offer is worth as much as
-adding a new one.
-
-## If it's your company
-
-Claim it and the record carries your signature instead of our reading of your
-page. Prove the domain whichever way suits you: DNS, a file on your site, a role
-address, or a reply from any mailbox on your domain. Claiming establishes who you
-are and never signs your offers for you; you attest to those separately, by exact
-revision.
-
-Free, now and later. Start at `sourcey.com/claim/<your-slug>`.
-
-## Licence
-
-Facts are [CC BY 4.0](DATA-LICENSE.md). Documentation and metadata are [MIT](LICENSE).
-
----
-
-<p align="center">Know a program that isn't here yet? <a href="CONTRIBUTING.md">Add it.</a></p>
+MIT.
