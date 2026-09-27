@@ -1,0 +1,340 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ops Control HQ Nano npm Health API",
+    "version": "2026-09-27",
+    "description": "Public npm metadata and weekly download counts summarized into a heuristic maintenance-health report. This is not a vulnerability or security audit. Price: 0.001 XNO per successful paid report over x402 v2 exact on nano:mainnet.",
+    "contact": {
+      "name": "Ops Control HQ",
+      "email": "opscontrolhq@outlook.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://tkoqkknsezxavtxfywkm.supabase.co/functions/v1/nano-npm-risk"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getNanoNpmHealthStatus",
+        "summary": "Check free service readiness",
+        "responses": {
+          "200": {
+            "description": "Service initialization completed. This does not prove a paid settlement.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "paymentNetwork": {
+                      "type": "string"
+                    },
+                    "facilitator": {
+                      "type": "string"
+                    },
+                    "priceXno": {
+                      "type": "string"
+                    },
+                    "paymentConfigured": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "paymentNetwork",
+                    "facilitator",
+                    "priceXno",
+                    "paymentConfigured"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/npm-risk": {
+      "get": {
+        "operationId": "getNpmHealthNano",
+        "summary": "Get an npm package health report for 0.001 XNO",
+        "description": "An unpaid syntactically valid request returns an x402 quote. Use an existing x402 Nano client to authorize that quote, then repeat the same request with PAYMENT-SIGNATURE. The server verifies payment, prepares the report, then settles. Missing/malformed package names are rejected before the quote; unknown packages and metadata-source errors after verification do not settle the payment. Download-count source failures may yield null weeklyDownloads. Do not interpret the score as absence of vulnerabilities.",
+        "parameters": [
+          {
+            "name": "package",
+            "in": "query",
+            "required": true,
+            "description": "npm package name, including scoped names such as @x402/core. Whitespace around the value is trimmed.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 214
+            },
+            "example": "react"
+          },
+          {
+            "name": "PAYMENT-SIGNATURE",
+            "in": "header",
+            "required": false,
+            "description": "Base64-encoded x402 v2 payment payload produced by a Nano-capable client from the returned quote. Omit to obtain the unpaid payment requirements.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report delivered after successful settlement.",
+            "headers": {
+              "PAYMENT-RESPONSE": {
+                "description": "Base64-encoded x402 settlement response.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid package input, malformed payment payload, or request-processing failure.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required, payment rejected, or settlement failed. The unpaid challenge includes PAYMENT-REQUIRED; payment errors may not.",
+            "headers": {
+              "PAYMENT-REQUIRED": {
+                "description": "Base64-encoded x402 v2 challenge with resource and accepts. Use its current payment terms.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found after payment verification; payment is not settled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream npm metadata unavailable; payment is not settled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "Flag": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          },
+          "days": {
+            "type": "integer"
+          },
+          "downloads": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Report": {
+        "type": "object",
+        "required": [
+          "package",
+          "latestVersion",
+          "score",
+          "verdict",
+          "flags",
+          "evidence",
+          "generatedAt",
+          "methodology",
+          "payment"
+        ],
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "latestVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Starts at 100. Subtract 25 per high-severity flag, 12 per medium flag, 5 per low flag; minimum 0."
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "low-obvious-risk",
+              "review",
+              "high-caution"
+            ],
+            "description": "Score >=80: low-obvious-risk; >=55: review; below 55: high-caution."
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Flag"
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "required": [
+              "lastPublishedAt",
+              "lastPublishedDaysAgo",
+              "weeklyDownloads",
+              "maintainers",
+              "license",
+              "repository"
+            ],
+            "properties": {
+              "lastPublishedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastPublishedDaysAgo": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "weeklyDownloads": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "maintainers": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "license": {
+                "description": "Registry license metadata as supplied by npm; normally a string, but upstream legacy metadata may have another JSON type."
+              },
+              "repository": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "methodology": {
+            "type": "string"
+          },
+          "payment": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Settled transaction hash, if supplied by the facilitator."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-payment": {
+    "protocol": "x402",
+    "version": 2,
+    "scheme": "exact",
+    "network": "nano:mainnet",
+    "asset": "XNO",
+    "priceXno": "0.001",
+    "facilitator": "https://facilitator.pursekeeper.dev",
+    "termsSource": "Use the live PAYMENT-REQUIRED challenge."
+  }
+}
