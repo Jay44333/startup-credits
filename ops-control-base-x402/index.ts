@@ -125,18 +125,26 @@ async function snapshot(pkg: string) {
 
 const openApi = {
   openapi: '3.1.0',
-  info: { title: 'Ops Control HQ npm Health x402 API', version: '2026.09.27.3', description: 'Current npm package health and maintenance-risk snapshots for machine buyers.' },
+  info: {
+    title: 'Ops Control HQ npm Health x402 API',
+    version: '2026.09.27.4',
+    description: 'Current npm package health and maintenance-risk snapshots for machine buyers.',
+    'x-guidance': 'Call GET /v1/npm-health with the required package query parameter. Unpaid calls receive an x402 v2 Base-USDC payment challenge; after payment the same request returns a current JSON health snapshot. Use /sample for a free example.',
+    contact: { email: 'opscontrolhq@outlook.com' }
+  },
   servers: [{ url: PUBLIC_BASE }],
   'x-discovery': { ownershipProofs: [PAY_TO] },
   paths: {
     '/v1/npm-health': {
       get: {
+        operationId: 'getNpmHealth',
         summary: 'Get current npm package health and maintenance-risk snapshot',
-        parameters: [{ name: 'package', in: 'query', required: true, schema: { type: 'string' }, example: 'react' }],
-        'x-payment-info': { protocols: ['x402'], price: { mode: 'fixed', currency: 'USD', amount: '0.01' }, network: NETWORK, asset: 'USDC', payTo: PAY_TO },
+        tags: ['Developer tooling'],
+        parameters: [{ name: 'package', in: 'query', required: true, description: 'npm package name', schema: { type: 'string', minLength: 1 }, example: 'react' }],
+        'x-payment-info': { protocols: [{ x402: {} }], price: { mode: 'fixed', currency: 'USD', amount: '0.01' }, network: NETWORK, asset: 'USDC', payTo: PAY_TO },
         responses: {
           '200': { description: 'Paid package health report', content: { 'application/json': { schema: { type: 'object' } } } },
-          '402': { description: 'x402 Payment Required' },
+          '402': { description: 'Payment Required' },
           '404': { description: 'Package not found' }
         }
       }
@@ -152,7 +160,7 @@ Deno.serve(async (req: Request) => {
 
   if (req.method === 'GET' && (suffix === '/' || suffix === '' || suffix === '/healthz')) {
     await initialization;
-    return json({ ok: true, service: 'npm-health-x402-base', version: '2026.09.27.3', priceUsd: 0.01, network: NETWORK, payTo: PAY_TO, facilitator: FACILITATOR, discovery: { openapi: `${PUBLIC_BASE}/openapi.json`, x402: `${PUBLIC_BASE}/.well-known/x402`, source: 'https://github.com/Jay44333/startup-credits/blob/ops-control-nano-seller/ops-control-base-x402/index.ts' } });
+    return json({ ok: true, service: 'npm-health-x402-base', version: '2026.09.27.4', priceUsd: 0.01, network: NETWORK, payTo: PAY_TO, facilitator: FACILITATOR, discovery: { openapi: `${PUBLIC_BASE}/openapi.json`, x402: `${PUBLIC_BASE}/.well-known/x402`, source: 'https://github.com/Jay44333/startup-credits/blob/ops-control-nano-seller/ops-control-base-x402/index.ts' } });
   }
 
   if (req.method === 'GET' && suffix === '/openapi.json') return json(openApi);
