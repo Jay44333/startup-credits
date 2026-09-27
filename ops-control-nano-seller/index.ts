@@ -4,6 +4,7 @@ import { ExactNanoScheme } from "npm:@x402nano/exact@0.2.3/server";
 const PRICE = "0.001";
 const FACILITATOR_URL = "https://facilitator.pursekeeper.dev";
 const PAY_TO = "nano_3mr761i87o7o33hmrd67a1emt81j6djgdqeyod95ip5qcidz77b71x4ukqea";
+const PUBLIC_BASE = "https://tkoqkknsezxavtxfywkm.supabase.co/functions/v1/nano-npm-risk";
 
 const facilitator = new HTTPFacilitatorClient({ url: FACILITATOR_URL });
 const resourceServer = new x402ResourceServer(facilitator);
@@ -45,16 +46,13 @@ function repositoryUrl(repository: unknown): string | null {
 async function buildNpmRiskReport(packageName: string | null) {
   const normalized = validatePackageName(packageName);
   if (!normalized) throw Object.assign(new Error("Invalid npm package name"), { statusCode: 400 });
-
   const encoded = encodeURIComponent(normalized);
   const [metadataResponse, downloadsResponse] = await Promise.all([
     fetch(`https://registry.npmjs.org/${encoded}`, { headers: { accept: "application/json" } }),
     fetch(`https://api.npmjs.org/downloads/point/last-week/${encoded}`, { headers: { accept: "application/json" } }),
   ]);
-
   if (metadataResponse.status === 404) throw Object.assign(new Error("Package not found"), { statusCode: 404 });
   if (!metadataResponse.ok) throw Object.assign(new Error(`npm registry returned ${metadataResponse.status}`), { statusCode: 502 });
-
   const metadata = await metadataResponse.json();
   const latestVersion = metadata["dist-tags"]?.latest ?? null;
   const latest = latestVersion ? metadata.versions?.[latestVersion] ?? {} : {};
@@ -62,7 +60,6 @@ async function buildNpmRiskReport(packageName: string | null) {
   const lastPublishedDaysAgo = daysSince(lastPublishedAt, new Date());
   const maintainers = Array.isArray(metadata.maintainers) ? metadata.maintainers.length : 0;
   const weeklyDownloads = downloadsResponse.ok ? Number((await downloadsResponse.json()).downloads ?? 0) : null;
-
   const flags: Record<string, unknown>[] = [];
   if (latest.deprecated) flags.push({ code: "deprecated", severity: "high", detail: String(latest.deprecated) });
   if (lastPublishedDaysAgo === null) flags.push({ code: "publish_date_unknown", severity: "medium" });
@@ -73,10 +70,8 @@ async function buildNpmRiskReport(packageName: string | null) {
   if (weeklyDownloads !== null && weeklyDownloads < 100) flags.push({ code: "low_weekly_downloads", severity: "medium", downloads: weeklyDownloads });
   if (!latest.license && !metadata.license) flags.push({ code: "license_unknown", severity: "medium" });
   if (!repositoryUrl(latest.repository ?? metadata.repository)) flags.push({ code: "repository_missing", severity: "low" });
-
   const penalty = flags.reduce((total, flag) => total + ({ high: 25, medium: 12, low: 5 }[String(flag.severity)] ?? 0), 0);
   const score = Math.max(0, 100 - penalty);
-
   return {
     package: normalized,
     latestVersion,
@@ -97,8 +92,8 @@ async function buildNpmRiskReport(packageName: string | null) {
 }
 
 Deno.serve(async (req: Request) => {
-  const url = new URL(req.url);
-  const suffix = url.pathname.replace(/^\/nano-npm-risk/, "");
+  const internalUrl = new URL(req.url);
+  const suffix = internalUrl.pathname.replace(/^\/nano-npm-risk/, "");
 
   if (req.method === "GET" && (suffix === "/healthz" || suffix === "/" || suffix === "")) {
     await initialization;
@@ -108,6 +103,7 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "GET" || suffix !== "/v1/npm-risk") return json({ error: "not_found" }, 404);
 
   await initialization;
+  const publicResourceUrl = `${PUBLIC_BASE}/v1/npm-risk${internalUrl.search}`;
   const config = {
     scheme: "exact",
     network: "nano:mainnet",
@@ -121,30 +117,22 @@ Deno.serve(async (req: Request) => {
 
   if (!paymentHeader) {
     const paymentRequired = await resourceServer.createPaymentRequiredResponse([requirements], {
-      url: req.url,
+      url: publicResourceUrl,
       description: config.description,
       mimeType: config.mimeType,
     });
     const encoded = btoa(JSON.stringify(paymentRequired));
-    return json(
-      { error: "payment_required", scheme: "exact", network: "nano:mainnet", price: `${PRICE} XNO` },
-      402,
-      { "PAYMENT-REQUIRED": encoded },
-    );
+    return json({ error: "payment_required", scheme: "exact", network: "nano:mainnet", price: `${PRICE} XNO` }, 402, { "PAYMENT-REQUIRED": encoded });
   }
 
   try {
     const payload = JSON.parse(atob(paymentHeader));
     const verified = await resourceServer.verifyPayment(payload, requirements);
     if (!verified.isValid) return json({ error: "invalid_payment", reason: verified.invalidReason }, 402);
-
     const settled = await resourceServer.settlePayment(payload, requirements);
     if (!settled.success) return json({ error: "settlement_failed", reason: settled.errorReason }, 402);
-
-    const report = await buildNpmRiskReport(url.searchParams.get("package"));
-    return json({ ...report, payment: settled.transaction ?? null }, 200, {
-      "PAYMENT-RESPONSE": btoa(JSON.stringify(settled)),
-    });
+    const report = await buildNpmRiskReport(internalUrl.searchParams.get("package"));
+    return json({ ...report, payment: settled.transaction ?? null }, 200, { "PAYMENT-RESPONSE": btoa(JSON.stringify(settled)) });
   } catch (error) {
     return json({ error: "request_failed", message: error instanceof Error ? error.message : String(error) }, 400);
   }
