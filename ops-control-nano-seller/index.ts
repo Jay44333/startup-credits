@@ -91,6 +91,14 @@ async function buildNpmRiskReport(packageName: string | null) {
   };
 }
 
+function statusCode(error: unknown, fallback = 500) {
+  if (error && typeof error === "object" && "statusCode" in error) {
+    const value = Number((error as { statusCode?: unknown }).statusCode);
+    if (Number.isInteger(value) && value >= 400 && value <= 599) return value;
+  }
+  return fallback;
+}
+
 Deno.serve(async (req: Request) => {
   const internalUrl = new URL(req.url);
   const suffix = internalUrl.pathname.replace(/^\/nano-npm-risk/, "");
@@ -101,6 +109,9 @@ Deno.serve(async (req: Request) => {
   }
 
   if (req.method !== "GET" || suffix !== "/v1/npm-risk") return json({ error: "not_found" }, 404);
+
+  const requestedPackage = validatePackageName(internalUrl.searchParams.get("package"));
+  if (!requestedPackage) return json({ error: "invalid_package", message: "Provide ?package=<npm-package>" }, 400);
 
   await initialization;
   const publicResourceUrl = `${PUBLIC_BASE}/v1/npm-risk${internalUrl.search}`;
@@ -129,9 +140,23 @@ Deno.serve(async (req: Request) => {
     const payload = JSON.parse(atob(paymentHeader));
     const verified = await resourceServer.verifyPayment(payload, requirements);
     if (!verified.isValid) return json({ error: "invalid_payment", reason: verified.invalidReason }, 402);
+
+    // Do not settle until the requested deliverable is known to be valid and available.
+    // A valid payment signature should never be consumed for a malformed/missing package
+    // or for an upstream npm-registry failure.
+    let report;
+    try {
+      report = await buildNpmRiskReport(requestedPackage);
+    } catch (error) {
+      const status = statusCode(error, 502);
+      return json({
+        error: status === 404 ? "package_not_found" : status === 400 ? "invalid_package" : "upstream_error",
+        message: error instanceof Error ? error.message : String(error),
+      }, status);
+    }
+
     const settled = await resourceServer.settlePayment(payload, requirements);
     if (!settled.success) return json({ error: "settlement_failed", reason: settled.errorReason }, 402);
-    const report = await buildNpmRiskReport(internalUrl.searchParams.get("package"));
     return json({ ...report, payment: settled.transaction ?? null }, 200, { "PAYMENT-RESPONSE": btoa(JSON.stringify(settled)) });
   } catch (error) {
     return json({ error: "request_failed", message: error instanceof Error ? error.message : String(error) }, 400);
