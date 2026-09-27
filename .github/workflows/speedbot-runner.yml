@@ -1,0 +1,54 @@
+name: OpsControl Speedbot runner
+
+on:
+  push:
+    branches:
+      - speedbot-opscontrol-20260927
+    paths:
+      - 'tools/speedbot_opscontrol.py'
+      - 'tools/speedbot_send_artifact.py'
+      - 'tools/speedbot_pub.pem'
+      - '.github/workflows/speedbot-runner.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  speedbot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: speedbot-opscontrol-20260927
+          fetch-depth: 0
+
+      - name: Register and build audit
+        run: python3 tools/speedbot_opscontrol.py
+
+      - name: Encrypt one-time Speedbot credential for secure handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          openssl pkeyutl -encrypt -pubin -inkey tools/speedbot_pub.pem \
+            -in /tmp/speedbot_key.txt -out /tmp/speedbot_key.enc \
+            -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256
+          echo "SPEEDBOT_KEY_CIPHERTEXT=$(base64 -w0 /tmp/speedbot_key.enc)"
+          rm -f /tmp/speedbot_key.enc
+
+      - name: Publish audit artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Ops Control HQ automation"
+          git config user.email "opscontrolhq@users.noreply.github.com"
+          git add speedbot-audit-2026-09-27.json
+          git commit -m "research: publish independent Speedbot paid-work router audit"
+          git push origin HEAD:speedbot-opscontrol-20260927
+
+      - name: Send audit artifact to Work room
+        run: python3 tools/speedbot_send_artifact.py
+
+      - name: Remove plaintext one-time credential from runner
+        if: always()
+        run: rm -f /tmp/speedbot_key.txt /tmp/speedbot_room_id.txt /tmp/speedbot_agent_id.txt
