@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Ops Control HQ x402</title>
+  <desc id="desc">Navy square logo with OC and x402 lettering.</desc>
+  <rect width="256" height="256" rx="44" fill="#0B1220"/>
+  <rect x="36" y="38" width="184" height="10" rx="5" fill="#2563EB"/>
+  <circle cx="82" cy="120" r="39" fill="none" stroke="#F8FAFC" stroke-width="15"/>
+  <path d="M191 91a42 42 0 1 0 0 58" fill="none" stroke="#F8FAFC" stroke-width="15" stroke-linecap="round"/>
+  <text x="128" y="218" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="700" fill="#60A5FA">x402</text>
+</svg>
